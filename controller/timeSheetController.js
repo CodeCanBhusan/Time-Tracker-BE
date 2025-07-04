@@ -65,6 +65,8 @@ export const getTimeSheetTurn = async (req, res) => {
         .json({ message: "User token and project are required" });
     }
 
+    const developer = await Developer.findById(userToken);
+
     const _timeSheet = await TimeSheet.findOne({
       developer: userToken,
       project: project,
@@ -76,7 +78,7 @@ export const getTimeSheetTurn = async (req, res) => {
     if (!_timeSheet) {
       res.status(200).json({
         turn: "start",
-        developer: _timeSheet?.developer,
+        developer,
       });
 
       return;
@@ -86,7 +88,7 @@ export const getTimeSheetTurn = async (req, res) => {
       res.status(200).json({
         turn: "end",
         timeSheet: _timeSheet,
-        developer: _timeSheet?.developer,
+        developer: developer,
       });
 
       return;
@@ -95,7 +97,7 @@ export const getTimeSheetTurn = async (req, res) => {
     if (!!_timeSheet?.startTime && !!_timeSheet.endTime) {
       res.status(200).json({
         turn: "start",
-        developer: _timeSheet?.developer,
+        developer: developer,
       });
 
       return;
@@ -103,7 +105,7 @@ export const getTimeSheetTurn = async (req, res) => {
 
     res.status(200).json({
       turn: "start",
-      developer: _timeSheet?.developer,
+      developer: developer,
     });
   } catch (error) {
     res.status(500).json(error);
